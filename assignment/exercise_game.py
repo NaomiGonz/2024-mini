@@ -1,26 +1,58 @@
-"""
-Response time - single-threaded
-"""
 
+#modified game 
 from machine import Pin
 import time
 import random
 import json
+import urequests
+import network
 
 
-N: int = 3
+N: int = 10
 sample_ms = 10.0
 on_ms = 500
 
+# WiFi credentials
+SSID = ""
+PASSWORD = ""
+
+# Firebase API URL
+database_api_url = ""
+
+
+def connect_to_wifi():
+    wlan = network.WLAN(network.STA_IF)
+    wlan.active(True)
+
+    if wlan.isconnected():
+        print("Already connected to WiFi")
+    else:
+        # Connect to the WiFi network
+        print(f"Connecting to WiFi network '{SSID}'...")
+        wlan.connect(SSID, PASSWORD)
+
+        max_wait = 10
+        while max_wait > 0:
+            if wlan.isconnected():
+                print("Connected to WiFi!")
+                break
+            max_wait -= 1
+            print("Waiting for connection...")
+            time.sleep(1)
+
+        if wlan.isconnected():
+            print("Network config:", wlan.ifconfig())
+            return wlan.ifconfig()
+        else:
+            print("Failed to connect to WiFi")
+            return None
+
 
 def random_time_interval(tmin: float, tmax: float) -> float:
-    """return a random time interval between max and min"""
     return random.uniform(tmin, tmax)
 
 
 def blinker(N: int, led: Pin) -> None:
-    # %% let user know game started / is over
-
     for _ in range(N):
         led.high()
         time.sleep(0.1)
@@ -28,51 +60,46 @@ def blinker(N: int, led: Pin) -> None:
         time.sleep(0.1)
 
 
-def write_json(json_filename: str, data: dict) -> None:
-    """Writes data to a JSON file.
-
-    Parameters
-    ----------
-
-    json_filename: str
-        The name of the file to write to. This will overwrite any existing file.
-
-    data: dict
-        Dictionary data to write to the file.
-    """
-
-    with open(json_filename, "w") as f:
-        json.dump(data, f)
-
-
 def scorer(t: list[int | None]) -> None:
-    # %% collate results
     misses = t.count(None)
     print(f"You missed the light {misses} / {len(t)} times")
 
     t_good = [x for x in t if x is not None]
 
-    print(t_good)
+    if t_good:
+        avg_response_time = sum(t_good) / len(t_good)
+        min_response_time = min(t_good)
+        max_response_time = max(t_good)
+    else:
+        avg_response_time = min_response_time = max_response_time = None
 
-    # add key, value to this dict to store the minimum, maximum, average response time
-    # and score (non-misses / total flashes) i.e. the score a floating point number
-    # is in range [0..1]
-    data = {}
+    print(f"Average Response Time: {avg_response_time} ms")
+    print(f"Minimum Response Time: {min_response_time} ms")
+    print(f"Maximum Response Time: {max_response_time} ms")
 
-    # %% make dynamic filename and write JSON
+    # Prepare data to upload
+    data = {
+        "average_response_time": avg_response_time,
+        "min_response_time": min_response_time,
+        "max_response_time": max_response_time,
+        "score": (len(t_good) / len(t)),
+        "misses": misses,
+        "timestamps": t
+    }
 
-    now: tuple[int] = time.localtime()
-
-    now_str = "-".join(map(str, now[:3])) + "T" + "_".join(map(str, now[3:6]))
-    filename = f"score-{now_str}.json"
-
-    print("write", filename)
-
-    write_json(filename, data)
+    # Upload data to Firebase
+    try:
+        headers = {"Content-Type": "application/json"}
+        response = urequests.post(database_api_url, headers=headers, data=json.dumps(data))
+        print("Data uploaded to Firebase")
+        response.close()
+    except Exception as e:
+        print(f"Failed to upload to Firebase: {e}")
 
 
 if __name__ == "__main__":
-    # using "if __name__" allows us to reuse functions in other script files
+    # Connect to WiFi
+    connect_to_wifi()
 
     led = Pin("LED", Pin.OUT)
     button = Pin(16, Pin.IN, Pin.PULL_UP)
@@ -99,4 +126,6 @@ if __name__ == "__main__":
 
     blinker(5, led)
 
+    # Score and upload results
     scorer(t)
+
