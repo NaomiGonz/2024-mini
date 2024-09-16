@@ -8,6 +8,12 @@ min_bright = 30000
 ```python
 
 
+
+
+```
+
+## Exercise 3 Question
+```python
 #modified game 
 from machine import Pin
 import time
@@ -137,10 +143,4 @@ if __name__ == "__main__":
 
     # Score and upload results
     scorer(t)
-
-```
-
-## Exercise 3 Question
-```python
-print("change this later")
 ```
