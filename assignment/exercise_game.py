@@ -1,4 +1,4 @@
-
+# Naomi G and Anirudh S
 #modified game 
 from machine import Pin
 import time
