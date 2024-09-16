@@ -2,7 +2,7 @@
 
 ## Exersice 1 Questions 
 max_bright = 1000
-min_brigt = 30000
+min_bright = 30000
 
 ## Exercise 2 Question
 ```python
