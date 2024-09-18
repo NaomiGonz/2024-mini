@@ -1,22 +1,32 @@
 # 2024 Fall Miniproject Report
+Naomi G and Anirudh S
 
 ## Exersice 1 Questions 
 max_bright = 608
 min_bright = 52652
 
-Design Description:
-    we adjusted the min_bright value to 30000, which represents the lowest duty cycle, and the max_bright value to 1000, which corresponds to the highest duty cycle for bright light, after testing the sensor in a wide range. We looked at a list of generated values and worked on figuring out the average range and decided on the values mentioned above.
+### Design Description:
+    we adjusted the min_bright value to 52652, which represents the lowest duty cycle. At the lowest duty cycle the light can visually be seen as turning on and off. The found max_bright value was 608, which corresponds to the highest duty cycle for bright light. At the highest duty cycle the light can be visually seen as always on. After testing the sensor in a wide range. We looked at a list of generated values and worked on figuring out the average range and decided on the values mentioned above.
+
+    ![max brightness](/images/max_brightness.png)
+    *fig1: max brightness captured with flashlight in bright room*
+
+    ![min brightness](/images/min_brightness.png)
+    *fig2: min brightness captured by covering photocell in dark room
 
 ## Exercise 2 Question
-Design Description:
+### Design Description:
     Pin GP16 was chosen for the speaker because it supports pulse width modulation (PWM), necessary to produce the different frequencies. We used playtone method to play each note for a certain amount of time, which essentially modulates the PWM frequency.
 
+    Video of the tune being played can be found in images/tune.mov
+
+### Code:
 ```python
-#!/usr/bin/env python3
 """
 Fur ELise Song:
 Naomi G and Anirudh S
-playtone() and quiet() found on https://www.coderdojotc.org/micropython/sound/04-play-scale/
+- playtone() and quiet() found on https://www.coderdojotc.org/micropython/sound/04-play-scale/
+- used sheet music: https://musescore.com/user/2816076/scores/5418894
 """
 
 import machine
@@ -43,8 +53,8 @@ EIGHTH = 2
 HALF = 8
 HALF_DOTTED = 12
 
-TEMPO = 100
-SPACING = 0.3
+TEMPO = 0.12
+SPACING = 0.025
 
 # GP16 is the speaker pin
 SPEAKER_PIN = 16
@@ -52,6 +62,7 @@ SPEAKER_PIN = 16
 # create a Pulse Width Modulation Object on this pin
 speaker = machine.PWM(machine.Pin(SPEAKER_PIN))
 
+# Fur Elise notes 
 song_notes = [
     [REST, E5, DS5, E5, DS5, E5, B4, D5, C5, A4, REST, C4, E4, A4, B4, REST, E4, GS4, B4, C5, REST, E4, E5, DS5],
     [E5, DS5, E5, B4, D5, C5, A4, REST, C4, E4, A4, B4, REST, E4, C5, B4, A4, REST, B4, C5, D5, E5, REST, G4, F5, E5],
@@ -60,44 +71,86 @@ song_notes = [
     [E5, DS5, E5, B4, D5, C5, A4, REST, C4, E4, A4, B4, REST, E4, C5, B4, A4]
 ]
 
-song_times = [
-    [HALF, EIGHTH, EIGHTH, EIGHTH, EIGHTH, EIGHTH, EIGHTH, EIGHTH, EIGHTH, QUARTER, EIGHTH, EIGHTH, EIGHTH, EIGHTH, ],
+# Measure lengths
+two8 = [HALF, EIGHTH, EIGHTH]
+six8 = [EIGHTH, EIGHTH, EIGHTH, EIGHTH, EIGHTH, EIGHTH]
+four8 = [QUARTER, EIGHTH, EIGHTH, EIGHTH, EIGHTH]
+zero8 = [HALF_DOTTED]
+
+# measure lengths in order
+song_times = [ 
+    [two8, six8, four8, four8, four8], 
+    [six8, four8, four8, four8, four8],
+    [four8, four8, zero8, two8],
+    [six8, four8, four8, four8],
+    [six8, four8, four8, zero8],
+
 ]
 
 #initil status 
+line = 0
 a = 0
 b = 0
+c = 0
+current_measure = song_times[line][b]
 
 def playtone(frequency: float, duration: float) -> None:
     speaker.duty_u16(1000)
-    speaker.freq(frequency)
+    speaker.freq(int(frequency))
     utime.sleep(duration)
 
 
 def quiet():
     speaker.duty_u16(0)
 
+while line < len(song_notes):
+    a = 0
+    b = 0
+    c = 0
+    while a < len(song_notes[line]):
+        current_note = song_notes[line][a]
+        current_note_length = current_measure[c]
+        print(f"Playing Note: {current_note}")
+        if current_note == REST:
+            quiet()
+            utime.sleep(current_note_length * TEMPO)
+        else:
+            playtone(current_note, current_note_length * TEMPO)
+        
+        # Spacing between notes
+        quiet()
+        utime.sleep(SPACING)
 
-freq: float = 30
-duration: float = 0.1  # seconds
-
-print("Playing frequency (Hz):")
-
-for i in range(64):
-    print(freq)
-    playtone(freq, duration)
-    freq = int(freq * 1.1)
+        # Move to the next note
+        a+=1
+        c+=1
+        if c >= len(current_measure):
+            c = 0
+            b += 1
+            if b >= len(song_times[line]):
+                break
+            current_measure = song_times[line][b]
+    line += 1
+    if line < len(song_notes):
+        current_measure = song_times[line][0]
+    
 
 # Turn off the PWM
 quiet()
-
-
-
 ```
 
 ## Exercise 3 Question
-Design Description:
+### Design Description:
     In order to generate LED blink at random intervals, the random_time_interval is used. Through using these response times, we werre able to calculate different categories of response times and the times the player missed. The scorer function prints out the player's performance summary. We used firebase as our cloud service as it was relatively easier to use. We used urequests library in micropython to make an HTTP post request and push the created summary JSON file with all of the data onto the cloud.
+
+    ![shell output](/images/console_output.png)
+    *fig3: Shell output when running the code successfully*
+
+    ![cloud image](/images/cloud.png)
+    *fig4: Data that was transfered to the cloud*
+
+### Code:
+    *Note: the api url and wifi password and name are left blank for security reasons. 
 ```python
 #modified game 
 from machine import Pin
