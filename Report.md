@@ -1,8 +1,8 @@
 # 2024 Fall Miniproject Report
 
 ## Exersice 1 Questions 
-max_bright = 1000
-min_bright = 30000
+max_bright = 608
+min_bright = 52652
 
 Design Description:
     we adjusted the min_bright value to 30000, which represents the lowest duty cycle, and the max_bright value to 1000, which corresponds to the highest duty cycle for bright light, after testing the sensor in a wide range. We looked at a list of generated values and worked on figuring out the average range and decided on the values mentioned above.
