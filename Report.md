@@ -22,7 +22,7 @@ We adjusted the min_bright value to 52652, which represents the lowest duty cycl
 ### Design Description:
 Pin GP16 was chosen for the speaker because it supports pulse width modulation (PWM), necessary to produce the different frequencies. We used playtone method to play each note for a certain amount of time, which essentially modulates the PWM frequency.
 
-**Video of the tune being played can be found in images/tune.mov**
+**Video of the tune being played can be found in `images/tune.mov`**
 
 ### Code:
 ```python
