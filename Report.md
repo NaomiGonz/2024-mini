@@ -4,7 +4,13 @@
 max_bright = 1000
 min_bright = 30000
 
+Design Description:
+    we adjusted the min_bright value to 30000, which represents the lowest duty cycle, and the max_bright value to 1000, which corresponds to the highest duty cycle for bright light, after testing the sensor in a wide range. We looked at a list of generated values and worked on figuring out the average range and decided on the values mentioned above.
+
 ## Exercise 2 Question
+Design Description:
+    Pin GP16 was chosen for the speaker because it supports pulse width modulation (PWM), necessary to produce the different frequencies. We used playtone method to play each note for a certain amount of time, which essentially modulates the PWM frequency.
+
 ```python
 #!/usr/bin/env python3
 """
@@ -90,6 +96,8 @@ quiet()
 ```
 
 ## Exercise 3 Question
+Design Description:
+    In order to generate LED blink at random intervals, the random_time_interval is used. Through using these response times, we werre able to calculate different categories of response times and the times the player missed. The scorer function prints out the player's performance summary. We used firebase as our cloud service as it was relatively easier to use. We used urequests library in micropython to make an HTTP post request and push the created summary JSON file with all of the data onto the cloud.
 ```python
 #modified game 
 from machine import Pin
