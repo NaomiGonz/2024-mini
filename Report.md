@@ -2,23 +2,25 @@
 Naomi G and Anirudh S
 
 ## Exersice 1 Questions 
+'''
 max_bright = 608
 min_bright = 52652
+'''
 
 ### Design Description:
-    we adjusted the min_bright value to 52652, which represents the lowest duty cycle. At the lowest duty cycle the light can visually be seen as turning on and off. The found max_bright value was 608, which corresponds to the highest duty cycle for bright light. At the highest duty cycle the light can be visually seen as always on. After testing the sensor in a wide range. We looked at a list of generated values and worked on figuring out the average range and decided on the values mentioned above.
+We adjusted the min_bright value to 52652, which represents the lowest duty cycle. At the lowest duty cycle the light can visually be seen as turning on and off. The found max_bright value was 608, which corresponds to the highest duty cycle for bright light. At the highest duty cycle the light can be visually seen as always on. After testing the sensor in a wide range. We looked at a list of generated values and worked on figuring out the average range and decided on the values mentioned above.
 
-    ![max brightness](/images/max_brightness.png)
-    *fig1: max brightness captured with flashlight in bright room*
+![max brightness](/images/max_brightness.png)
+*fig1: max brightness captured with flashlight in bright room*
 
-    ![min brightness](/images/min_brightness.png)
-    *fig2: min brightness captured by covering photocell in dark room
+![min brightness](/images/min_brightness.png)
+*fig2: min brightness captured by covering photocell in dark room*
 
 ## Exercise 2 Question
 ### Design Description:
-    Pin GP16 was chosen for the speaker because it supports pulse width modulation (PWM), necessary to produce the different frequencies. We used playtone method to play each note for a certain amount of time, which essentially modulates the PWM frequency.
+Pin GP16 was chosen for the speaker because it supports pulse width modulation (PWM), necessary to produce the different frequencies. We used playtone method to play each note for a certain amount of time, which essentially modulates the PWM frequency.
 
-    Video of the tune being played can be found in images/tune.mov
+*Video of the tune being played can be found in images/tune.mov*
 
 ### Code:
 ```python
@@ -141,16 +143,16 @@ quiet()
 
 ## Exercise 3 Question
 ### Design Description:
-    In order to generate LED blink at random intervals, the random_time_interval is used. Through using these response times, we werre able to calculate different categories of response times and the times the player missed. The scorer function prints out the player's performance summary. We used firebase as our cloud service as it was relatively easier to use. We used urequests library in micropython to make an HTTP post request and push the created summary JSON file with all of the data onto the cloud.
+In order to generate LED blink at random intervals, the random_time_interval is used. Through using these response times, we werre able to calculate different categories of response times and the times the player missed. The scorer function prints out the player's performance summary. We used firebase as our cloud service as it was relatively easier to use. We used urequests library in micropython to make an HTTP post request and push the created summary JSON file with all of the data onto the cloud.
 
-    ![shell output](/images/console_output.png)
-    *fig3: Shell output when running the code successfully*
+![shell output](/images/console_output.png)
+*fig3: Shell output when running the code successfully*
 
-    ![cloud image](/images/cloud.png)
-    *fig4: Data that was transfered to the cloud*
+![cloud image](/images/cloud.png)
+*fig4: Data that was transfered to the cloud*
 
 ### Code:
-    *Note: the api url and wifi password and name are left blank for security reasons. 
+*Note: the api url and wifi password and name are left blank for security reasons.* 
 ```python
 #modified game 
 from machine import Pin
