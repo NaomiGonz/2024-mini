@@ -10,11 +10,11 @@ min_bright = 52652
 ### Design Description:
 We adjusted the min_bright value to 52652, which represents the lowest duty cycle. At the lowest duty cycle the light can visually be seen as turning on and off. The found max_bright value was 608, which corresponds to the highest duty cycle for bright light. At the highest duty cycle the light can be visually seen as always on. After testing the sensor in a wide range. We looked at a list of generated values and worked on figuring out the average range and decided on the values mentioned above.
 
-<img src="/images/max_brightness.png" alt="max bright" width="100"/>
+<img src="/images/max_brightness.png" alt="max bright" width="500"/>
 
 *fig1: max brightness captured with flashlight in bright room*
 
-<img src="/images/min_brightness.png" alt="max bright" width="100"/>
+<img src="/images/min_brightness.png" alt="max bright" width="500"/>
 
 *fig2: min brightness captured by covering photocell in dark room*
 
@@ -147,11 +147,11 @@ quiet()
 ### Design Description:
 In order to generate LED blink at random intervals, the random_time_interval is used. Through using these response times, we werre able to calculate different categories of response times and the times the player missed. The scorer function prints out the player's performance summary. We used firebase as our cloud service as it was relatively easier to use. We used urequests library in micropython to make an HTTP post request and push the created summary JSON file with all of the data onto the cloud.
 
-<img src="/images/console_output.png" alt="output" width="50"/>
+<img src="/images/console_output.png" alt="output" width="250"/>
 
 *fig3: Shell output when running the code successfully*
 
-<img src="/images/cloud.png" alt="output" width="100"/>
+<img src="/images/cloud.png" alt="output" width="500"/>
 
 *fig4: Data that was transfered to the cloud*
 
